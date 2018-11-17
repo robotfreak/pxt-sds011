@@ -16,8 +16,7 @@
 namespace sds011 {
 
     export function parseMessage(rawBuffer: Buffer) {
-        // Decodes the hex value string
-        const buffer = toHex(rawBuffer);
+
 
         // crc check
         if (!crcOk(rawBuffer)) {
@@ -27,8 +26,8 @@ namespace sds011 {
         // Extract PM values. Formula from the spec:
         //   PM2.5 value: PM2.5 (ug/m3) = ((PM2.5 High byte *256) + PM2.5 low byte) / 10
         //   PM10 value: PM10 (ug/m3) = ((PM10 high byte*256) + PM10 low byte) / 10
-        const pm2_5 = (buffer.charCodeAt(2) | (buffer.charCodeAt(3) << 8)) / 10.0;
-        const pm10 = (buffer.charCodeAt(4) | (buffer.charCodeAt(5) << 8)) / 10.0;
+        const pm2_5 = (rawBuffer[2] | (rawBuffer[3] << 8)) / 10.0;
+        const pm10 = (rawBuffer[4] | (rawBuffer[5] << 8)) / 10.0;
 
         return {
             pm2_5: pm2_5,
@@ -38,13 +37,12 @@ namespace sds011 {
 
     // Check-sum: Check-sum=DATA1+DATA2+...+DATA6
     function crc(buffer: Buffer) {
-        const part = buffer.slice(2, 8);
+        let calcCrc = 0;
 
-        var calcCrc = part.reduce(function (prev, curr) {
-            return prev + curr
-        });
-
-        calcCrc &= 0xFF;
+        for (let i = 2; i<8; i++) {
+         calcCrc += buffer[i];
+         calcCrc &= 0xFF;
+        }
 
         return calcCrc;
     }
@@ -56,15 +54,5 @@ namespace sds011 {
 
         return (calcCrc == novaCrc);
     }
-
-    function toHex(str: Buffer):string {
-        let result = '';
-
-        for (var i = 0; i < str.length; i++) {
-            result += str[i].toString(16);
-        }
-
-        return result;
-    };
 
 }
