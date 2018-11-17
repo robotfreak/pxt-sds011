@@ -1,4 +1,6 @@
 
+sds011.connectSDS011(SerialPin.P0, SerialPin.P1);
+
 basic.forever(function () {
     let buffer: Buffer
     buffer = serial.readBuffer(10);

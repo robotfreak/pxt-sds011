@@ -13,8 +13,16 @@
 //   8 Check-sum Check-sum
 //   9 message tail AB
 
+//% color=#fabe58 icon="\uf108" block="Nova SDS011"
 namespace sds011 {
 
+    /**
+ * Parse Message from SDS011 device 
+ * @param rawBuffer Message Buffer
+ */
+    //% subcategory="SDS011"
+    //% blockId="sds011_parse_message" block="parse SDS011 device message"
+    //% weight=50
     export function parseMessage(rawBuffer: Buffer) {
 
         // crc check
@@ -41,9 +49,9 @@ namespace sds011 {
     function crc(buffer: Buffer) {
         let calcCrc = 0;
 
-        for (let i = 2; i<8; i++) {
-         calcCrc += buffer[i];
-         calcCrc &= 0xFF;
+        for (let i = 2; i < 8; i++) {
+            calcCrc += buffer[i];
+            calcCrc &= 0xFF;
         }
 
         return calcCrc;
@@ -56,5 +64,18 @@ namespace sds011 {
 
         return (calcCrc == novaCrc);
     }
+
+    /**
+ * Connects to serial SDS011 device 
+ * @param sdsRX MP3 device receiver pin (RX), eg: Mi.A0
+ * @param sdsTX MP3 device transmitter pin (TX), eg: Pin.A1
+ */
+    //% subcategory="SDS011"
+    //% blockId="sds011_connect" block="connect SDS011 device with RX attached to %sdsRX | and TX to %sdsTX"
+    //% weight=50
+    export function connectSDS011(sdsRX: number, sdsTX: number): void {
+        serial.redirect(sdsRX, sdsTX, BaudRate.BaudRate9600)
+    }
+
 
 }
