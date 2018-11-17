@@ -17,10 +17,12 @@ namespace sds011 {
 
     export function parseMessage(rawBuffer: Buffer) {
 
-
         // crc check
         if (!crcOk(rawBuffer)) {
-            return 0;
+            return {
+                pm2_5: 0,
+                pm10: 0
+            }
         }
 
         // Extract PM values. Formula from the spec:
